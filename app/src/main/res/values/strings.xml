@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Vk logging online friends</string>
+    <string name="sign_in">Войти</string>
+    <string name="text_ok">OK</string>
+    <string name="text_error">Ошибка</string>
+    <string name="are_you_sure">Вы действительно хотите выйти?</string>
+    <string name="text_yes">Да</string>
+    <string name="text_cancel">Отмена</string>
+    <string name="you_really_want_logout">Вы хотите выйти из своей учетной записи Вконтакте?</string>
+    <string name="choose_date">Выберите дату</string>
+    <string name="empty_friend_statistic">Для этого друга нет сохраненных данных. Чтобы получить статистику запустите сервис отслеживания.</string>
+    <string name="choose_date_text">Для просмотра статистики выберите дату.</string>
+    <string name="dont_saved">Нет сохраненных данных</string>
+    <string name="friends_photo">friends photo</string>
+    <string name="track">Отслеживать</string>
+    <string name="welcome_message">Для работы приложения необходимо войти в свой аккаунт Вконтакте и разрешить доступ к странице и списку друзей</string>
+    <string name="friends">Друзья</string>
+    <string name="logout">Выход</string>
+    <string name="avatar_photo">avatar photo</string>
+    <string name="search">Поиск</string>
+    <string name="all_friends">Все друзья</string>
+    <string name="online_friends">Только онлайн</string>
+    <string name="service_is_running">Сервис уже запущен</string>
+    <string name="service_stopped">Сервис остановлен</string>
+    <integer name="com_vk_sdk_AppId">8027060</integer>
+</resources>

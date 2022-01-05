@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.vkloggingonlinefriends.presentation.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/main_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.vkloggingonlinefriends.presentation.ui.userprofile.ProfileFragment"
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_friendsListFragment"
+            app:destination="@id/friendsListFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/main_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendsListFragment"
+        android:name="com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListFragment"
+        android:label="FriendsListFragment" >
+        <action
+            android:id="@+id/action_friendsListFragment_to_friendDetailFragment"
+            app:destination="@id/friendDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendDetailFragment"
+        android:name="com.example.vkloggingonlinefriends.presentation.ui.frienddetail.FriendDetailFragment"
+        android:label="FriendDetailFragment" >
+        <argument
+            android:name="friendId"
+            app:argType="integer" />
+    </fragment>
+</navigation>

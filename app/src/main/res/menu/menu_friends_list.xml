@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/search_friend"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+    <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/allFriends"
+        android:title="@string/all_friends" />
+    <item
+        android:id="@+id/onlineFriends"
+        android:title="@string/online_friends" />
+    </group>
+</menu>

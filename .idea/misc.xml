@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/drawable/online_icon.xml" value="0.3415384615384615" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/activity_loginvk.xml" value="0.1875" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/activity_main.xml" value="0.1540020263424519" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_friend_detail.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_friendslist.xml" value="0.16084093211752787" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/item_friend.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/menu/menu_friends_list.xml" value="0.22" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
