@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,22 +17,24 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.vkloggingonlinefriends.R
-import com.example.vkloggingonlinefriends.data.cache.model.OnlineTimeStatistic
 import com.example.vkloggingonlinefriends.databinding.FragmentFriendDetailBinding
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.domain.model.Friend
 import com.example.vkloggingonlinefriends.domain.service.FriendsLoggingService
 import com.example.vkloggingonlinefriends.presentation.ui.frienddetail.FriendDetailEvent.*
 import com.example.vkloggingonlinefriends.presentation.ui.frienddetail.FriendDetailState.*
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class FriendDetailFragment : Fragment() {
+
+    companion object {
+        private const val MONDAY = 2
+    }
 
     @Inject
     lateinit var dataStore: AppDataStore
@@ -86,22 +89,22 @@ class FriendDetailFragment : Fragment() {
             viewModel.stateFriendDetail.collectLatest { state ->
                 when (state) {
                     FriendInfoLoading -> {
-                        binding.calendarView.visibility = View.GONE
-                        binding.savedStatisticTv.visibility = View.GONE
+                        binding.calendarView.isVisible = false
+                        binding.savedStatisticTv.isVisible = false
                     }
                     is FriendInfoLoadedSuccess -> {
-                        binding.calendarView.visibility = View.GONE
-                        binding.savedStatisticTv.visibility = View.GONE
+                        binding.calendarView.isVisible = false
+                        binding.savedStatisticTv.isVisible = false
                         showFriendInfo(state.friend)
                         calendarViewSetting(state.minDate)
                     }
                     DateSelection -> {
-                        binding.calendarView.visibility = View.VISIBLE
-                        binding.savedStatisticTv.visibility = View.GONE
+                        binding.calendarView.isVisible = true
+                        binding.savedStatisticTv.isVisible = false
                     }
                     is StatisticsReady -> {
-                        binding.calendarView.visibility = View.GONE
-                        binding.savedStatisticTv.visibility = View.VISIBLE
+                        binding.calendarView.isVisible = false
+                        binding.savedStatisticTv.isVisible = true
                         showSavedStatistic(state.statistics)
                     }
                     LoggingStarted -> {
@@ -116,7 +119,7 @@ class FriendDetailFragment : Fragment() {
     }
 
     private fun calendarViewSetting(minDate: Long) {
-        binding.calendarView.firstDayOfWeek = 2
+        binding.calendarView.firstDayOfWeek = MONDAY
         binding.calendarView.minDate = minDate
         binding.calendarView.maxDate = System.currentTimeMillis()
     }
@@ -133,7 +136,8 @@ class FriendDetailFragment : Fragment() {
         if (!serviceIsRunning) {
             val serviceIntent = Intent(activity, FriendsLoggingService::class.java)
             context?.let { ContextCompat.startForegroundService(it, serviceIntent) }
-        } else Toast.makeText(context, getString(R.string.service_is_running), Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(context, getString(R.string.service_is_running), Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun stopService() {
@@ -154,17 +158,10 @@ class FriendDetailFragment : Fragment() {
             .into(binding.friendPhoto)
     }
 
-    private fun showSavedStatistic(statistics: List<OnlineTimeStatistic>) {
-        val savedStatistic = mutableListOf<String>()
-        statistics.forEach { statistic ->
-            val sdf = SimpleDateFormat("HH:mm:ss dd/M/yyyy", Locale.ENGLISH)
-            val date = sdf.format(Date(statistic.currentDate))
-            val string = "${statistic.description} $date \n"
-            savedStatistic.add(string)
-        }
+    private fun showSavedStatistic(statistics: List<String>) {
         binding.savedStatisticTv.text =
-            if (savedStatistic.isEmpty()) getString(R.string.dont_saved) else ""
-        savedStatistic.forEach {
+            if (statistics.isEmpty()) getString(R.string.dont_saved) else EMPTY_STRING
+        statistics.forEach {
             binding.savedStatisticTv.append(it)
         }
     }
@@ -172,4 +169,5 @@ class FriendDetailFragment : Fragment() {
     private fun setButtonText(text: String) {
         binding.selectDateBtn.text = text
     }
+
 }

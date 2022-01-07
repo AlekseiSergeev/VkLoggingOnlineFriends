@@ -19,21 +19,17 @@ class VkCacheDataSourceImpl(
         vkDao.insertUser(userEntityMapper.mapFromDomainModel(user))
     }
 
-    override suspend fun getUser(): User {
-        return userEntityMapper.mapToDomainModel(vkDao.getUser())
-    }
+    override suspend fun getUser(): User = userEntityMapper.mapToDomainModel(vkDao.getUser())
 
     override suspend fun insertFriend(friend: Friend) {
         vkDao.insertFriends(friendEntityMapper.mapFromDomainModel(friend))
     }
 
-    override suspend fun getAllFriends(): List<Friend> {
-        return friendEntityMapper.toDomainList(vkDao.getAllFriends())
-    }
+    override suspend fun getAllFriends(): List<Friend> =
+        friendEntityMapper.toDomainList(vkDao.getAllFriends())
 
-    override suspend fun getFriendById(id: Int): Friend {
-        return friendEntityMapper.mapToDomainModel(vkDao.getFriendById(id))
-    }
+    override suspend fun getFriendById(id: Int): Friend =
+        friendEntityMapper.mapToDomainModel(vkDao.getFriendById(id))
 
     override suspend fun updateFriendLogging(id: Int, logging: Boolean) {
         vkDao.updateFriendLogging(id, logging)
@@ -51,17 +47,14 @@ class VkCacheDataSourceImpl(
         vkDao.updateLoggedFriendPreviousOnline(id, onlineStatus)
     }
 
-    override suspend fun getLoggedFriends(): List<LoggedFriends> {
-        return vkDao.getLoggedFriends()
-    }
+    override suspend fun getLoggedFriends(): List<LoggedFriends> = vkDao.getLoggedFriends()
 
     override suspend fun insertOnlineTimeStatistic(statistic: OnlineTimeStatistic) {
         vkDao.insertOnlineTimeStatistic(statistic)
     }
 
-    override suspend fun getStatisticForFriend(id: Int): List<OnlineTimeStatistic> {
-        return vkDao.getStatisticForFriend(id)
-    }
+    override suspend fun getStatisticForFriend(id: Int): List<OnlineTimeStatistic> =
+        vkDao.getStatisticForFriend(id)
 
     override suspend fun deleteUsers() {
         vkDao.deleteUsers()
@@ -74,4 +67,5 @@ class VkCacheDataSourceImpl(
     override suspend fun deleteAllLoggedFriends() {
         vkDao.deleteAllLoggedFriends()
     }
+
 }

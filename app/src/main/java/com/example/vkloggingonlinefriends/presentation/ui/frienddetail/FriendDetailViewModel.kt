@@ -14,9 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,7 +43,7 @@ class FriendDetailViewModel
             when (event) {
                 is SetCurrentFriend -> {
                     setCurrentFriend(event.friendId)
-                    getFriendStatistic(event.friendId)
+                    loadFriendStatistic(event.friendId)
                     _stateFriendDetail.value = FriendInfoLoadedSuccess(currentFriend, getMinDate())
                 }
                 SelectDateButtonClicked -> {
@@ -49,7 +51,7 @@ class FriendDetailViewModel
                 }
                 is SelectedDateChanged -> {
                     getStatisticByDate(event.year, event.month, event.day)
-                    _stateFriendDetail.value = StatisticsReady(friendStatisticByDate)
+                    _stateFriendDetail.value = StatisticsReady(getFormattedStatistic())
                 }
                 StartLoggingFriend -> {
                     startLoggingFriend()
@@ -61,18 +63,14 @@ class FriendDetailViewModel
         }
     }
 
-    private suspend fun getFriendStatistic(id: Int?) {
-        if (id != null) {
-            friendStatistic.addAll(repository.getStatisticForFriend(id))
-        }
+    private suspend fun loadFriendStatistic(id: Int) {
+        friendStatistic.addAll(repository.getStatisticForFriend(id))
         getMinDate()
     }
 
     private fun getMinDate(): Long {
         var minDate = System.currentTimeMillis()
-        if (!friendStatistic.isNullOrEmpty()) {
-            minDate = friendStatistic[0].currentDate
-        }
+        if (!friendStatistic.isNullOrEmpty())  minDate = friendStatistic[0].currentDate
         return minDate
     }
 
@@ -93,6 +91,17 @@ class FriendDetailViewModel
         friendStatisticByDate.addAll(statistics)
     }
 
+    private fun getFormattedStatistic(): List<String> {
+        val formattedStatistic = mutableListOf<String>()
+        friendStatisticByDate.forEach { statistic ->
+            val sdf = SimpleDateFormat("HH:mm:ss dd/M/yyyy", Locale.ENGLISH)
+            val date = sdf.format(Date(statistic.currentDate))
+            val string = "${statistic.description} $date \n"
+            formattedStatistic.add(string)
+        }
+        return formattedStatistic
+    }
+
     private suspend fun setCurrentFriend(friendId: Int) {
         currentFriend = repository.getFriendById(friendId)
     }
@@ -107,26 +116,19 @@ class FriendDetailViewModel
         deleteLoggedFriend()
         updateFriendLogging(false)
         val loggedFriends = repository.getLoggedFriends()
-        if (loggedFriends.isNullOrEmpty()) {
-            _stateFriendDetail.value = LoggingStopped
-        }
+        if (loggedFriends.isNullOrEmpty()) _stateFriendDetail.value = LoggingStopped
     }
 
     private suspend fun updateFriendLogging(logging: Boolean) {
-        currentFriend.id?.let { id ->
-            repository.updateFriendLogging(id = id, logging = logging)
-        }
+        repository.updateFriendLogging(currentFriend.id, logging)
     }
 
     private suspend fun insertLoggedFriend() {
-        currentFriend.id?.let { id ->
-            repository.insertLoggedFriend(id, true)
-        }
+        repository.insertLoggedFriend(currentFriend.id, true)
     }
 
     private suspend fun deleteLoggedFriend() {
-        currentFriend.id?.let { id ->
-            repository.deleteLoggedFriend(id)
-        }
+        repository.deleteLoggedFriend(currentFriend.id)
     }
+
 }

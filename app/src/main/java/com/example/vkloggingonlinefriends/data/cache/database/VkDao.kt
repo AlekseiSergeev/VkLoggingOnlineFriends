@@ -30,9 +30,6 @@ interface VkDao {
     @Query("UPDATE friends SET logging = :logging WHERE id = :id")
     suspend fun updateFriendLogging(id: Int, logging: Boolean)
 
-    @Query("UPDATE friends SET previous_online = :previousOnline WHERE id = :id")
-    suspend fun updateFriendPreviousOnline(id: Int, previousOnline: Int)
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertLoggedFriend(loggedFriends: LoggedFriends)
 
@@ -62,4 +59,5 @@ interface VkDao {
 
     @Query("DELETE FROM logged_friends")
     suspend fun deleteAllLoggedFriends()
+
 }

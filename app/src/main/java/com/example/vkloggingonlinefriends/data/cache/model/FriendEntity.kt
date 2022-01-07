@@ -8,17 +8,15 @@ import androidx.room.PrimaryKey
 data class FriendEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
-    val id: Int?,
+    val id: Int,
     @ColumnInfo(name = "first_name")
-    val firstName: String?,
+    val firstName: String,
     @ColumnInfo(name = "last_name")
-    val lastName: String?,
+    val lastName: String,
     @ColumnInfo(name = "photo")
-    val photo: String?,
+    val photo: String,
     @ColumnInfo(name = "online")
-    val online: Int?,
+    val online: Int,
     @ColumnInfo(name = "logging")
-    var logging: Boolean,
-    @ColumnInfo(name = "previous_online")
-    var previousOnlineStatus: Int
+    val logging: Boolean
 )

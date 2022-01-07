@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.vkloggingonlinefriends.R
 import com.example.vkloggingonlinefriends.databinding.ItemFriendBinding
 import com.example.vkloggingonlinefriends.domain.model.Friend
+import com.example.vkloggingonlinefriends.utils.VK_ONLINE
 
 class FriendsListAdapter(private val onClickListener: OnClickListener) :
     ListAdapter<Friend, FriendsListAdapter.FriendViewHolder>(FriendDiffCallback()) {
@@ -30,7 +31,7 @@ class FriendsListAdapter(private val onClickListener: OnClickListener) :
             .load(friend.photo)
             .apply(RequestOptions.circleCropTransform())
             .into(holder.photoFriends)
-        if (friend.online == 1) {
+        if (friend.online == VK_ONLINE) {
             holder.onlineStatus.setImageResource(R.drawable.online_img)
         } else {
             holder.onlineStatus.setImageResource(R.drawable.offline_img)
@@ -58,6 +59,7 @@ class FriendsListAdapter(private val onClickListener: OnClickListener) :
     class OnClickListener(val clickListener: (friend: Friend) -> Unit) {
         fun onClick(friend: Friend) = clickListener(friend)
     }
+
 }
 
 class FriendDiffCallback : DiffUtil.ItemCallback<Friend>() {
@@ -69,4 +71,5 @@ class FriendDiffCallback : DiffUtil.ItemCallback<Friend>() {
         oldItem.id == newItem.id && oldItem.firstName == newItem.firstName
                 && oldItem.lastName == newItem.lastName && oldItem.photo == newItem.photo
                 && oldItem.online == newItem.online && oldItem.logging == newItem.logging
+
 }

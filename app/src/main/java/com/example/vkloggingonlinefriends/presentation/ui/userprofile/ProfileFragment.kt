@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.vkloggingonlinefriends.R
 import com.example.vkloggingonlinefriends.databinding.FragmentProfileBinding
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.domain.model.User
 import com.example.vkloggingonlinefriends.domain.service.FriendsLoggingService
 import com.example.vkloggingonlinefriends.presentation.MaterialDialogsCallback
@@ -153,7 +153,7 @@ class ProfileFragment : Fragment() {
         if (serviceIsRunning) {
             val serviceIntent = Intent(activity, FriendsLoggingService::class.java)
             activity?.stopService(serviceIntent)
-            Toast.makeText(context, "Сервис остановлен", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.service_stopped), Toast.LENGTH_SHORT).show()
         }
     }
 

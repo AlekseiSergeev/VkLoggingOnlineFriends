@@ -10,13 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.vkloggingonlinefriends.databinding.FragmentLoginBinding
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.presentation.ui.login.LoginEvent.*
+import com.example.vkloggingonlinefriends.utils.RESULT_ERROR_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
@@ -53,12 +55,12 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val vkActivityLauncher = registerForActivityResult(StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) {
+        val vkActivityLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
                 viewModel.onTriggerEvent(LoginSuccess)
             }
-            if (it.resultCode == Activity.RESULT_CANCELED) {
-                val errorMessage = it.data?.getStringExtra("error")
+            if (result.resultCode == Activity.RESULT_CANCELED) {
+                val errorMessage = result.data?.getStringExtra(RESULT_ERROR_KEY)
                 viewModel.onTriggerEvent(LoginFailed(errorMessage))
             }
         }
@@ -71,13 +73,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeLoginState(loginState: LoginState) {
-        binding.progressBarLogin.visibility = if (loginState.showProgressBar) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        binding.progressBarLogin.isVisible = loginState.showProgressBar
         if (loginState.isLoggedIn) {
-            Toast.makeText(activity, "You successfully login!", Toast.LENGTH_SHORT).show()
             viewModel.onTriggerEvent(ReturnToInitialState)
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToProfileFragment())
         }

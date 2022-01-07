@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.vkloggingonlinefriends.R
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
+import com.example.vkloggingonlinefriends.utils.RESULT_ERROR_KEY
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
@@ -18,7 +20,7 @@ class LoginVkActivity : AppCompatActivity() {
 
     @Inject
     lateinit var dataStore: AppDataStore
-    private var vkToken = ""
+    private var vkToken = EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,22 +31,21 @@ class LoginVkActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val callback = object : VKAuthCallback {
+
             override fun onLogin(token: VKAccessToken) {
-                // User passed authorization
                 vkToken = token.accessToken
                 dataStore.setNewToken(vkToken)
-
                 setResult(RESULT_OK)
                 finish()
             }
 
             override fun onLoginFailed(authException: VKAuthException) {
-                // User didn't pass authorization
                 val intentFailed = Intent()
-                intentFailed.putExtra("error", authException.authError)
+                intentFailed.putExtra(RESULT_ERROR_KEY, authException.authError)
                 setResult(RESULT_CANCELED, intentFailed)
                 finish()
             }
+
         }
         if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
             super.onActivityResult(requestCode, resultCode, data)
@@ -54,4 +55,5 @@ class LoginVkActivity : AppCompatActivity() {
     private fun loginVk() {
         VK.login(this, arrayListOf(VKScope.FRIENDS, VKScope.WALL, VKScope.OFFLINE))
     }
+
 }

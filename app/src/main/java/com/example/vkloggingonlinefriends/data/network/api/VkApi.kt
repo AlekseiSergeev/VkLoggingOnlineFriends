@@ -1,4 +1,4 @@
-package com.example.vkloggingonlinefriends.data.network.service
+package com.example.vkloggingonlinefriends.data.network.api
 
 import com.example.vkloggingonlinefriends.data.network.model.friend.OnlineFriendsId
 import com.example.vkloggingonlinefriends.data.network.model.friend.ResponseFriendsDto
@@ -7,7 +7,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface VkService {
+interface VkApi {
 
     @GET("users.get")
     suspend fun getUserInfo(
@@ -28,4 +28,5 @@ interface VkService {
         @Query("v") apiVersion: String,
         @Query("access_token") accessToken: String
     ): Response<OnlineFriendsId>
+
 }

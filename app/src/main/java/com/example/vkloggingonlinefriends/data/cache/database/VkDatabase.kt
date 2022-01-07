@@ -16,9 +16,10 @@ import com.example.vkloggingonlinefriends.data.cache.model.UserEntity
 )
 abstract class VkDatabase : RoomDatabase() {
 
-    abstract fun vkDao(): VkDao
-
     companion object {
         const val DATABASE_NAME: String = "vk_logging_db"
     }
+
+    abstract fun vkDao(): VkDao
+
 }

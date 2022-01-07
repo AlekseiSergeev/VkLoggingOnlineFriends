@@ -7,11 +7,11 @@ import com.example.vkloggingonlinefriends.data.cache.mappers.UserEntityMapper
 import com.example.vkloggingonlinefriends.data.network.datasource.VkNetworkDataSourceImpl
 import com.example.vkloggingonlinefriends.data.network.mappers.FriendDtoMapper
 import com.example.vkloggingonlinefriends.data.network.mappers.UserDtoMapper
-import com.example.vkloggingonlinefriends.data.network.service.VkService
+import com.example.vkloggingonlinefriends.data.network.api.VkApi
 import com.example.vkloggingonlinefriends.data.repository.VkCacheDataSource
 import com.example.vkloggingonlinefriends.data.repository.VkNetworkDataSource
 import com.example.vkloggingonlinefriends.data.repository.VkRepositoryImpl
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.domain.repository.VkRepository
 import dagger.Module
 import dagger.Provides
@@ -26,12 +26,12 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideVkNetworkDataSource(
-        vkService: VkService,
+        vkApi: VkApi,
         userDtoMapper: UserDtoMapper,
         friendDtoMapper: FriendDtoMapper,
         dataStore: AppDataStore
     ): VkNetworkDataSource {
-        return VkNetworkDataSourceImpl(vkService, userDtoMapper, friendDtoMapper, dataStore)
+        return VkNetworkDataSourceImpl(vkApi, userDtoMapper, friendDtoMapper, dataStore)
     }
 
     @Singleton

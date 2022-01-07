@@ -1,7 +1,7 @@
 package com.example.vkloggingonlinefriends.di
 
 import android.content.Context
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.presentation.VkApplication
 import dagger.Module
 import dagger.Provides

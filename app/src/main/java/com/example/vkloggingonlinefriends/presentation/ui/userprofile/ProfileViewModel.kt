@@ -2,12 +2,13 @@ package com.example.vkloggingonlinefriends.presentation.ui.userprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.domain.model.User
 import com.example.vkloggingonlinefriends.domain.repository.VkRepository
 import com.example.vkloggingonlinefriends.domain.state.DataState
 import com.example.vkloggingonlinefriends.presentation.ui.userprofile.ProfileEvent.*
 import com.example.vkloggingonlinefriends.presentation.ui.userprofile.ProfileState.*
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import com.vk.api.sdk.VK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -73,7 +74,7 @@ class ProfileViewModel
     }
 
     private suspend fun logout() {
-        dataStore.setNewToken("")
+        dataStore.setNewToken(EMPTY_STRING)
         clearCache()
         VK.logout()
         _profileState.update { UnloggedUser }

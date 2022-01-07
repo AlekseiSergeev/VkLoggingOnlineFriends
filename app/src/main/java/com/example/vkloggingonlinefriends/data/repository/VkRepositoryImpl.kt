@@ -81,35 +81,30 @@ class VkRepositoryImpl(
         }
     }
 
-    override suspend fun getFriendById(id: Int): Friend {
-        return cacheDataSource.getFriendById(id)
-    }
+    override suspend fun getFriendById(id: Int): Friend = cacheDataSource.getFriendById(id)
 
-    override suspend fun getOnlineFriendsId(): List<Int>? {
-        return try {
-            when (val serviceResponse = networkDataSource.getFriendsOnlineIds()) {
-                is DataState.Success -> {
-                    serviceResponse.data
-                }
-                is DataState.Error -> {
-                    listOf()
-                }
-                else -> {
-                    listOf()
-                }
+    override suspend fun getOnlineFriendsId(): List<Int>? = try {
+        when (val serviceResponse = networkDataSource.getFriendsOnlineIds()) {
+            is DataState.Success -> {
+                serviceResponse.data
             }
-        } catch (e: Exception) {
-            listOf()
+            is DataState.Error -> {
+                listOf()
+            }
+            else -> {
+                listOf()
+            }
         }
+    } catch (e: Exception) {
+        listOf()
     }
 
     override suspend fun updateFriendLogging(id: Int, logging: Boolean) {
         cacheDataSource.updateFriendLogging(id, logging)
     }
 
-    override suspend fun getLoggedFriends(): List<LoggedFriends> {
-        return cacheDataSource.getLoggedFriends()
-    }
+    override suspend fun getLoggedFriends(): List<LoggedFriends> =
+        cacheDataSource.getLoggedFriends()
 
     override suspend fun insertLoggedFriend(id: Int, logging: Boolean) {
         cacheDataSource.insertLoggedFriend(id, logging)
@@ -127,9 +122,8 @@ class VkRepositoryImpl(
         cacheDataSource.insertOnlineTimeStatistic(statistic)
     }
 
-    override suspend fun getStatisticForFriend(id: Int): List<OnlineTimeStatistic> {
-        return cacheDataSource.getStatisticForFriend(id)
-    }
+    override suspend fun getStatisticForFriend(id: Int): List<OnlineTimeStatistic> =
+        cacheDataSource.getStatisticForFriend(id)
 
     override suspend fun deleteUsers() {
         cacheDataSource.deleteUsers()

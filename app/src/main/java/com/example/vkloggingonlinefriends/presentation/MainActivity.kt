@@ -3,7 +3,7 @@ package com.example.vkloggingonlinefriends.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.vkloggingonlinefriends.R
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

@@ -8,9 +8,12 @@ import androidx.core.app.NotificationCompat
 import com.example.vkloggingonlinefriends.R
 import com.example.vkloggingonlinefriends.data.cache.model.LoggedFriends
 import com.example.vkloggingonlinefriends.data.cache.model.OnlineTimeStatistic
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.domain.repository.VkRepository
 import com.example.vkloggingonlinefriends.presentation.MainActivity
+import com.example.vkloggingonlinefriends.utils.CHANNEL_ID
+import com.example.vkloggingonlinefriends.utils.VK_OFFLINE
+import com.example.vkloggingonlinefriends.utils.VK_ONLINE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -18,8 +21,15 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FriendsLoggingService : Service() {
 
-    val CHANNEL_ID = "friendsLoggingServiceChannel"
+    companion object {
+        const val SERVICE_ID = 111
+        const val REQUEST_CODE = 0
+        const val ONE_MINUTE = 60000L
+    }
+
     private val job = Job()
+    private val startDescription: String by lazy { getString(R.string.start_description) }
+    private val endDescription: String by lazy { getString(R.string.end_description) }
     private var serviceIsRunning = false
 
     private val loggedFriends: MutableList<LoggedFriends> = mutableListOf()
@@ -41,56 +51,66 @@ class FriendsLoggingService : Service() {
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            this, REQUEST_CODE, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("VK friends service")
-            .setContentText("logging active")
+            .setContentTitle(getString(R.string.notification_title))
+            .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .build()
 
-        startForeground(1, notification)
+        startForeground(SERVICE_ID, notification)
 
         CoroutineScope(Dispatchers.IO + job).launch {
             var currentDate = System.currentTimeMillis()
             while (job.isActive) {
                 loggedFriends.addAll(repository.getLoggedFriends())
                 repository.getOnlineFriendsId()
-                    ?.let { onlineFriendsId.addAll(it) }
-                loggedFriends.forEach { it ->
-                    it.currentOnlineStatus = 0
+                    ?.let(onlineFriendsId::addAll)
+
+                loggedFriends.forEach { loggedFriend ->
+                    var updateFriend = loggedFriend.copy(currentOnlineStatus = VK_OFFLINE)
 
                     for (id in onlineFriendsId) {
-                        if (id == it.id) it.currentOnlineStatus = 1
+                        if (id == updateFriend.id) updateFriend =
+                            updateFriend.copy(currentOnlineStatus = VK_ONLINE)
                     }
 
                     currentDate = System.currentTimeMillis()
-                    if (it.currentOnlineStatus == 1 && it.previousOnlineStatus == 0) {
+                    if (updateFriend.currentOnlineStatus == VK_ONLINE &&
+                        updateFriend.previousOnlineStatus == VK_OFFLINE
+                    ) {
                         repository.insertOnlineTimeStatistic(
                             OnlineTimeStatistic(
-                                friendId = it.id,
+                                friendId = updateFriend.id,
                                 currentDate = currentDate,
-                                description = "Начало сеанса:"
+                                description = startDescription
                             )
                         )
                     }
-                    if (it.currentOnlineStatus == 0 && it.previousOnlineStatus == 1) {
+
+                    if (updateFriend.currentOnlineStatus == VK_OFFLINE &&
+                        updateFriend.previousOnlineStatus == VK_ONLINE
+                    ) {
                         repository.insertOnlineTimeStatistic(
                             OnlineTimeStatistic(
-                                friendId = it.id,
+                                friendId = updateFriend.id,
                                 currentDate = currentDate,
-                                description = "Конец сеанса:"
+                                description = endDescription
                             )
                         )
                     }
-                    repository.updateLoggedFriendPreviousOnline(it.id, it.currentOnlineStatus)
+                    repository.updateLoggedFriendPreviousOnline(
+                        updateFriend.id,
+                        updateFriend.currentOnlineStatus
+                    )
                 }
 
                 loggedFriends.clear()
                 onlineFriendsId.clear()
-                delay(60000)
+                delay(ONE_MINUTE)
             }
         }
 
@@ -107,4 +127,5 @@ class FriendsLoggingService : Service() {
         serviceIsRunning = false
         dataStore.setServiceRunning(serviceIsRunning)
     }
+
 }

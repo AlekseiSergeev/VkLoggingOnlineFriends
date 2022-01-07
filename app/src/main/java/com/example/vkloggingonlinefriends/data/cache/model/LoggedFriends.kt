@@ -10,9 +10,9 @@ data class LoggedFriends(
     @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "logging")
-    var logging: Boolean,
+    val logging: Boolean,
     @ColumnInfo(name = "previous_online")
-    var previousOnlineStatus: Int,
+    val previousOnlineStatus: Int,
     @ColumnInfo(name = "current_online")
-    var currentOnlineStatus: Int
+    val currentOnlineStatus: Int
 )

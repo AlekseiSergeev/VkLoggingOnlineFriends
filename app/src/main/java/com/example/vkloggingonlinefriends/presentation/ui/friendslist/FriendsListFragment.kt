@@ -15,6 +15,7 @@ import com.example.vkloggingonlinefriends.presentation.adapters.FriendsListAdapt
 import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListEvent.LoadingFriends
 import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListEvent.SearchFriends
 import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListState.*
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -25,7 +26,7 @@ class FriendsListFragment : Fragment() {
     private val viewModel: FriendsListViewModel by viewModels()
     private var showAllFriends = true
     private val adapter = FriendsListAdapter(FriendsListAdapter.OnClickListener {
-        it.id?.let { id -> doNavigateToFriendDetailFragment(id) }
+        doNavigateToFriendDetailFragment(it.id)
     })
 
     override fun onCreateView(
@@ -52,6 +53,36 @@ class FriendsListFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
             binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_friends_list, menu)
+
+        if (showAllFriends) menu.findItem(R.id.allFriends).isChecked = true
+        else menu.findItem(R.id.onlineFriends).isChecked = true
+
+        val search = menu.findItem(R.id.search_friend)
+        val searchView = search.actionView as SearchView
+        setSearchViewListener(searchView)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.allFriends -> {
+                showAllFriends = true
+                item.isChecked = showAllFriends
+                viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
+                return true
+            }
+            R.id.onlineFriends -> {
+                showAllFriends = false
+                item.isChecked = !showAllFriends
+                viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -105,18 +136,6 @@ class FriendsListFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_friends_list, menu)
-
-        if (showAllFriends) menu.findItem(R.id.allFriends).isChecked = true
-        else menu.findItem(R.id.onlineFriends).isChecked = true
-
-        val search = menu.findItem(R.id.search_friend)
-        val searchView = search.actionView as SearchView
-        setSearchViewListener(searchView)
-    }
-
     private fun setSearchViewListener(searchView: SearchView) {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
@@ -124,7 +143,7 @@ class FriendsListFragment : Fragment() {
                 if (!query.isNullOrEmpty()) {
                     viewModel.onTriggerEvent(SearchFriends(query, true))
                 } else {
-                    viewModel.onTriggerEvent(SearchFriends("", false))
+                    viewModel.onTriggerEvent(SearchFriends(EMPTY_STRING, false))
                 }
                 return false
             }
@@ -133,28 +152,11 @@ class FriendsListFragment : Fragment() {
                 if (!query.isNullOrEmpty()) {
                     viewModel.onTriggerEvent(SearchFriends(query, true))
                 } else {
-                    viewModel.onTriggerEvent(SearchFriends("", false))
+                    viewModel.onTriggerEvent(SearchFriends(EMPTY_STRING, false))
                 }
                 return false
             }
         })
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.allFriends -> {
-                showAllFriends = true
-                item.isChecked = showAllFriends
-                viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
-                return true
-            }
-            R.id.onlineFriends -> {
-                showAllFriends = false
-                item.isChecked = !showAllFriends
-                viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 }

@@ -2,8 +2,8 @@ package com.example.vkloggingonlinefriends.di
 
 import com.example.vkloggingonlinefriends.data.network.mappers.FriendDtoMapper
 import com.example.vkloggingonlinefriends.data.network.mappers.UserDtoMapper
-import com.example.vkloggingonlinefriends.data.network.service.VkService
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.network.api.VkApi
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,12 +19,12 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideVkService(): VkService {
+    fun provideVkApi(): VkApi {
         return Retrofit.Builder()
             .baseUrl("https://api.vk.com/method/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(VkService::class.java)
+            .create(VkApi::class.java)
     }
 
     @Singleton

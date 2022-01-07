@@ -6,35 +6,36 @@ import com.example.vkloggingonlinefriends.domain.util.DomainMapper
 
 class FriendEntityMapper : DomainMapper<FriendEntity, Friend> {
 
-    override fun mapToDomainModel(model: FriendEntity): Friend {
-        return Friend(
-            id = model.id,
-            firstName = model.firstName,
-            lastName = model.lastName,
-            photo = model.photo,
-            online = model.online,
-            logging = model.logging,
-            previousOnlineStatus = model.previousOnlineStatus
+    override fun mapToDomainModel(model: FriendEntity): Friend =
+        with(model) {
+        Friend(
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            photo = photo,
+            online = online,
+            logging = logging
         )
     }
 
-    override fun mapFromDomainModel(domainModel: Friend): FriendEntity {
-        return FriendEntity(
-            id = domainModel.id,
-            firstName = domainModel.firstName,
-            lastName = domainModel.lastName,
-            photo = domainModel.photo,
-            online = domainModel.online,
-            logging = domainModel.logging,
-            previousOnlineStatus = domainModel.previousOnlineStatus
+    override fun mapFromDomainModel(domainModel: Friend): FriendEntity =
+        with(domainModel) {
+        FriendEntity(
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            photo = photo,
+            online = online,
+            logging = logging
         )
     }
 
     fun toDomainList(initial: List<FriendEntity>): List<Friend> {
-        return initial.map { mapToDomainModel(it) }
+        return initial.map(this::mapToDomainModel)
     }
 
     fun fromDomainList(initial: List<Friend>): List<FriendEntity> {
-        return initial.map { mapFromDomainModel(it) }
+        return initial.map(this::mapFromDomainModel)
     }
+
 }

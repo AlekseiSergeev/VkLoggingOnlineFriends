@@ -1,4 +1,4 @@
-package com.example.vkloggingonlinefriends.datastore
+package com.example.vkloggingonlinefriends.data.cache.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -8,22 +8,28 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.vkloggingonlinefriends.presentation.VkApplication
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class AppDataStore
 @Inject constructor(app: VkApplication) {
+
+    companion object {
+        private const val DATASTORE_NAME = "VkToken"
+        private val VK_TOKEN = stringPreferencesKey("vk_token")
+        private val FRIENDS_SERVICE = booleanPreferencesKey("friends_service")
+    }
+
     private val context = app.applicationContext
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "VkToken")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DATASTORE_NAME)
     private val datastore: DataStore<Preferences> = context.dataStore
 
     private val scope = CoroutineScope(Dispatchers.Main)
-    private val _vkToken = MutableStateFlow("")
+    private val _vkToken = MutableStateFlow(EMPTY_STRING)
     val vkToken = _vkToken.asStateFlow()
 
     val isServiceRunning: Flow<Boolean> = datastore.data.map {
@@ -36,7 +42,7 @@ class AppDataStore
 
     fun observeDataStore() {
         datastore.data.onEach { preferences ->
-            _vkToken.value = preferences[VK_TOKEN] ?: ""
+            _vkToken.value = preferences[VK_TOKEN] ?: EMPTY_STRING
         }.launchIn(scope)
     }
 
@@ -44,7 +50,7 @@ class AppDataStore
         scope.launch {
             datastore.edit { preferences ->
                 preferences[VK_TOKEN] = token
-                _vkToken.value = preferences[VK_TOKEN] ?: ""
+                _vkToken.value = preferences[VK_TOKEN] ?: EMPTY_STRING
             }
         }
     }
@@ -57,12 +63,4 @@ class AppDataStore
         }
     }
 
-    fun getToken(): String {
-        return _vkToken.value
-    }
-
-    companion object {
-        private val VK_TOKEN = stringPreferencesKey("vk_token")
-        private val FRIENDS_SERVICE = booleanPreferencesKey("friends_service")
-    }
 }

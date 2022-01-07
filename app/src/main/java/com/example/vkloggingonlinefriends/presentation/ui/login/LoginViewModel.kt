@@ -1,10 +1,10 @@
 package com.example.vkloggingonlinefriends.presentation.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vkloggingonlinefriends.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.presentation.ui.login.LoginEvent.*
+import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,8 +43,7 @@ class LoginViewModel
     private fun observeSavedToken() {
         viewModelScope.launch {
             dataStore.vkToken.collectLatest {
-                Log.d("Debug Tag", "Debug: login token: $it !!!")
-                if (it != "") {
+                if (it != EMPTY_STRING) {
                     onTriggerEvent(LoginSuccess)
                 } else onTriggerEvent(ReturnToInitialState)
             }
