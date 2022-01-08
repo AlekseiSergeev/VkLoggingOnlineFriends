@@ -63,7 +63,7 @@ class FriendsListFragment : Fragment() {
         if (showAllFriends) menu.findItem(R.id.allFriends).isChecked = true
         else menu.findItem(R.id.onlineFriends).isChecked = true
 
-        val search = menu.findItem(R.id.search_friend)
+        val search = menu.findItem(R.id.searchFriend)
         val searchView = search.actionView as SearchView
         setSearchViewListener(searchView)
     }

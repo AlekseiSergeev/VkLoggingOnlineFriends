@@ -8,44 +8,41 @@
     android:padding="24dp"
     tools:context=".presentation.ui.login.LoginFragment">
 
-    <Button
-        android:id="@+id/signInButton"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSignIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="300dp"
+        android:layout_marginHorizontal="8dp"
         android:text="@string/sign_in"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        tools:ignore="TextContrastCheck" />
 
     <ProgressBar
         android:id="@+id/progressBarLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45" />
 
-    <TextView
-        android:id="@+id/tvLogin"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewLogin"
+        android:textAppearance="@style/TextStyleRoboto.Bold.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="100dp"
-        android:fontFamily="@font/roboto"
-        android:lineSpacingExtra="8sp"
+        android:layout_marginHorizontal="16dp"
         android:text="@string/welcome_message"
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/signInButton"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSignIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/TextStyleRoboto" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

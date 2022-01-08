@@ -66,7 +66,7 @@ class FriendDetailFragment : Fragment() {
 
         observeServiceState()
 
-        binding.switch1.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchLogging.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 viewModel.onTriggerEvent(StartLoggingFriend)
             } else {
@@ -74,7 +74,7 @@ class FriendDetailFragment : Fragment() {
             }
         }
 
-        binding.selectDateBtn.setOnClickListener {
+        binding.buttonSelectDate.setOnClickListener {
             viewModel.onTriggerEvent(SelectDateButtonClicked)
         }
 
@@ -90,21 +90,21 @@ class FriendDetailFragment : Fragment() {
                 when (state) {
                     FriendInfoLoading -> {
                         binding.calendarView.isVisible = false
-                        binding.savedStatisticTv.isVisible = false
+                        binding.textSavedStatistic.isVisible = false
                     }
                     is FriendInfoLoadedSuccess -> {
                         binding.calendarView.isVisible = false
-                        binding.savedStatisticTv.isVisible = false
+                        binding.textSavedStatistic.isVisible = false
                         showFriendInfo(state.friend)
                         calendarViewSetting(state.minDate)
                     }
                     DateSelection -> {
                         binding.calendarView.isVisible = true
-                        binding.savedStatisticTv.isVisible = false
+                        binding.textSavedStatistic.isVisible = false
                     }
                     is StatisticsReady -> {
                         binding.calendarView.isVisible = false
-                        binding.savedStatisticTv.isVisible = true
+                        binding.textSavedStatistic.isVisible = true
                         showSavedStatistic(state.statistics)
                     }
                     LoggingStarted -> {
@@ -149,25 +149,25 @@ class FriendDetailFragment : Fragment() {
     }
 
     private fun showFriendInfo(friend: Friend) {
-        binding.firstNameTv.text = friend.firstName
-        binding.lastNameTv.text = friend.lastName
-        binding.switch1.isChecked = friend.logging
+        binding.textViewFirstName.text = friend.firstName
+        binding.textViewLastName.text = friend.lastName
+        binding.switchLogging.isChecked = friend.logging
         Glide.with(this)
             .load(friend.photo)
             .apply(RequestOptions.circleCropTransform())
-            .into(binding.friendPhoto)
+            .into(binding.imageFriendPhoto)
     }
 
     private fun showSavedStatistic(statistics: List<String>) {
-        binding.savedStatisticTv.text =
+        binding.textSavedStatistic.text =
             if (statistics.isEmpty()) getString(R.string.dont_saved) else EMPTY_STRING
         statistics.forEach {
-            binding.savedStatisticTv.append(it)
+            binding.textSavedStatistic.append(it)
         }
     }
 
     private fun setButtonText(text: String) {
-        binding.selectDateBtn.text = text
+        binding.buttonSelectDate.text = text
     }
 
 }

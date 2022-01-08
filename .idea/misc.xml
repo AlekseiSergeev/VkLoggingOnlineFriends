@@ -4,12 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/drawable/online_icon.xml" value="0.3415384615384615" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/drawable/rectangle_cyan.xml" value="0.3" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/drawable/rectangle_gray.xml" value="0.3" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/activity_loginvk.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/activity_main.xml" value="0.1540020263424519" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_friend_detail.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_friendslist.xml" value="0.16084093211752787" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_login.xml" value="0.25" />
-        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/layout/item_friend.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Vkloggingonlinefriends/app/src/main/res/menu/menu_friends_list.xml" value="0.22" />
       </map>

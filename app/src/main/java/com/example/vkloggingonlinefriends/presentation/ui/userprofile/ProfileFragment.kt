@@ -57,10 +57,10 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnFriends.setOnClickListener {
+        binding.buttonFriends.setOnClickListener {
             findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFriendsListFragment())
         }
-        binding.btnLogout.setOnClickListener {
+        binding.buttonLogout.setOnClickListener {
             val areYouSureCallback = object : MaterialDialogsCallback {
                 override fun proceed() {
                     viewModel.onTriggerEvent(Logout)
@@ -107,11 +107,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showUserInfo(user: User) {
-        binding.tvUserName.text = "${user.firstName} ${user.lastName}"
+        binding.textViewUserName.text = "${user.firstName} ${user.lastName}"
         Glide.with(this@ProfileFragment)
             .load(user.photo)
             .apply(RequestOptions.circleCropTransform())
-            .into(binding.avatarImage)
+            .into(binding.imageUserAvatar)
     }
 
     private fun displayErrorDialog(message: String?) {

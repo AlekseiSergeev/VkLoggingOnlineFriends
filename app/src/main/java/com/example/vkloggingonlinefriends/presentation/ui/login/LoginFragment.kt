@@ -65,7 +65,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        binding.signInButton.setOnClickListener {
+        binding.buttonSignIn.setOnClickListener {
             viewModel.onTriggerEvent(LoginStarted)
             val intent = Intent(activity, LoginVkActivity::class.java)
             vkActivityLauncher.launch(intent)

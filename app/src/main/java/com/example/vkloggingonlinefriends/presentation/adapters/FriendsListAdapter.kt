@@ -1,6 +1,5 @@
 package com.example.vkloggingonlinefriends.presentation.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -41,19 +40,19 @@ class FriendsListAdapter(private val onClickListener: OnClickListener) :
         }
 
         if (friend.logging) {
-            holder.friendCardView.setCardBackgroundColor(Color.CYAN)
+            holder.constraintLayout.setBackgroundResource(R.drawable.rectangle_blue)
         } else {
-            holder.friendCardView.setCardBackgroundColor(Color.LTGRAY)
+            holder.constraintLayout.setBackgroundResource(R.drawable.rectangle_gray)
         }
     }
 
     inner class FriendViewHolder(binding: ItemFriendBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val firstName = binding.tvFirstName
-        val lastName = binding.tvLastName
-        val photoFriends = binding.avatarImageView
-        val onlineStatus = binding.imageOnline
-        val friendCardView = binding.friendCardView
+        val firstName = binding.textFirstNameItem
+        val lastName = binding.textLastNameItem
+        val photoFriends = binding.imageViewFriendItem
+        val onlineStatus = binding.imageOnlineItem
+        val constraintLayout = binding.layoutFriendItem
     }
 
     class OnClickListener(val clickListener: (friend: Friend) -> Unit) {

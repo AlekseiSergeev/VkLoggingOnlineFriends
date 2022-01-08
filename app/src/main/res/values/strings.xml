@@ -27,5 +27,6 @@
     <string name="end_description">Конец сеанса:</string>
     <string name="notification_title">Отслеживание онлайн активности друзей Vk</string>
     <string name="notification_text">Служба запущена</string>
+    <string name="online_status_image">online status image</string>
     <integer name="com_vk_sdk_AppId">8027060</integer>
 </resources>
