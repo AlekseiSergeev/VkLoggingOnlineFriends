@@ -16,6 +16,7 @@ import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsLis
 import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListEvent.SearchFriends
 import com.example.vkloggingonlinefriends.presentation.ui.friendslist.FriendsListState.*
 import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
+import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -119,7 +120,7 @@ class FriendsListFragment : Fragment() {
     }
 
     private fun doNavigateToFriendDetailFragment(friendId: Int) {
-        findNavController().navigate(
+        findNavController().safeNavigate(
             FriendsListFragmentDirections
                 .actionFriendsListFragmentToFriendDetailFragment(friendId)
         )

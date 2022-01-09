@@ -3,6 +3,7 @@ package com.example.vkloggingonlinefriends.presentation.ui.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.vkloggingonlinefriends.R
 import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
@@ -13,6 +14,7 @@ import com.vk.api.sdk.auth.VKAuthCallback
 import com.vk.api.sdk.auth.VKScope
 import com.vk.api.sdk.exceptions.VKAuthException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,7 +36,9 @@ class LoginVkActivity : AppCompatActivity() {
 
             override fun onLogin(token: VKAccessToken) {
                 vkToken = token.accessToken
-                dataStore.setNewToken(vkToken)
+                lifecycleScope.launch {
+                    dataStore.setNewToken(vkToken)
+                }
                 setResult(RESULT_OK)
                 finish()
             }

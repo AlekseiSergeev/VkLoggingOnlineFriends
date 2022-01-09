@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AppDataStore
@@ -46,8 +47,8 @@ class AppDataStore
         }.launchIn(scope)
     }
 
-    fun setNewToken(token: String) {
-        scope.launch {
+    suspend fun setNewToken(token: String) {
+        withContext(Dispatchers.Main) {
             datastore.edit { preferences ->
                 preferences[VK_TOKEN] = token
                 _vkToken.value = preferences[VK_TOKEN] ?: EMPTY_STRING

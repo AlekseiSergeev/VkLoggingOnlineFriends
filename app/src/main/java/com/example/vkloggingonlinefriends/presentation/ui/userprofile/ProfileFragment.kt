@@ -23,6 +23,7 @@ import com.example.vkloggingonlinefriends.domain.service.FriendsLoggingService
 import com.example.vkloggingonlinefriends.presentation.MaterialDialogsCallback
 import com.example.vkloggingonlinefriends.presentation.ui.userprofile.ProfileEvent.*
 import com.example.vkloggingonlinefriends.presentation.ui.userprofile.ProfileState.*
+import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -58,7 +59,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFriends.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFriendsListFragment())
+            findNavController().safeNavigate(ProfileFragmentDirections.actionProfileFragmentToFriendsListFragment())
         }
         binding.buttonLogout.setOnClickListener {
             val areYouSureCallback = object : MaterialDialogsCallback {
@@ -94,7 +95,7 @@ class ProfileFragment : Fragment() {
                     }
                     UnloggedUser -> {
                         stopService()
-                        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToLoginFragment())
+                        findNavController().safeNavigate(ProfileFragmentDirections.actionProfileFragmentToLoginFragment())
                         viewModel.onTriggerEvent(ReturnToInitialProfileState)
                     }
                 }

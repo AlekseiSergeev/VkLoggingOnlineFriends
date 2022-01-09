@@ -19,6 +19,7 @@ import com.example.vkloggingonlinefriends.databinding.FragmentLoginBinding
 import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
 import com.example.vkloggingonlinefriends.presentation.ui.login.LoginEvent.*
 import com.example.vkloggingonlinefriends.utils.RESULT_ERROR_KEY
+import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
@@ -76,7 +77,7 @@ class LoginFragment : Fragment() {
         binding.progressBarLogin.isVisible = loginState.showProgressBar
         if (loginState.isLoggedIn) {
             viewModel.onTriggerEvent(ReturnToInitialState)
-            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToProfileFragment())
+            findNavController().safeNavigate(LoginFragmentDirections.actionLoginFragmentToProfileFragment())
         }
         if (loginState.loginError != null) {
             Toast.makeText(activity, "Login error: ${loginState.loginError}", Toast.LENGTH_SHORT)

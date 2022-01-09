@@ -12,9 +12,9 @@ import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import com.vk.api.sdk.VK
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,10 +81,8 @@ class ProfileViewModel
     }
 
     private suspend fun clearCache() {
-        withContext(Dispatchers.IO) {
-            repository.deleteUsers()
-            repository.deleteAllFriends()
-        }
+        repository.deleteUsers()
+        repository.deleteAllFriends()
     }
 
 }
