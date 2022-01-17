@@ -10,14 +10,16 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.vkloggingonlinefriends.R
-import com.example.vkloggingonlinefriends.databinding.FragmentProfileBinding
 import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.databinding.FragmentProfileBinding
 import com.example.vkloggingonlinefriends.domain.model.User
 import com.example.vkloggingonlinefriends.domain.service.FriendsLoggingService
 import com.example.vkloggingonlinefriends.presentation.MaterialDialogsCallback
@@ -27,6 +29,7 @@ import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,20 +50,17 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         observeProfileState()
         observeServiceState()
         viewModel.onTriggerEvent(LoadingUser)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFriends.setOnClickListener {
             findNavController().safeNavigate(ProfileFragmentDirections.actionProfileFragmentToFriendsListFragment())
         }
+
         binding.buttonLogout.setOnClickListener {
             val areYouSureCallback = object : MaterialDialogsCallback {
                 override fun proceed() {
@@ -76,27 +76,29 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeProfileState() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.profileState.collectLatest { state ->
-                when (state) {
-                    InitialProfileState -> {
-                        showProgressBar(false)
-                    }
-                    is LoadingUserSuccess -> {
-                        showProgressBar(false)
-                        showUserInfo(state.user)
-                    }
-                    is LoadingUserFailed -> {
-                        showProgressBar(false)
-                        displayErrorDialog(state.errorMessage)
-                    }
-                    LoadingUserStarted -> {
-                        showProgressBar(true)
-                    }
-                    UnloggedUser -> {
-                        stopService()
-                        findNavController().safeNavigate(ProfileFragmentDirections.actionProfileFragmentToLoginFragment())
-                        viewModel.onTriggerEvent(ReturnToInitialProfileState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.profileState.collectLatest { state ->
+                    when (state) {
+                        InitialProfileState -> {
+                            showProgressBar(false)
+                        }
+                        is LoadingUserSuccess -> {
+                            showProgressBar(false)
+                            showUserInfo(state.user)
+                        }
+                        is LoadingUserFailed -> {
+                            showProgressBar(false)
+                            displayErrorDialog(state.errorMessage)
+                        }
+                        LoadingUserStarted -> {
+                            showProgressBar(true)
+                        }
+                        UnloggedUser -> {
+                            stopService()
+                            findNavController().safeNavigate(ProfileFragmentDirections.actionProfileFragmentToLoginFragment())
+                            viewModel.onTriggerEvent(ReturnToInitialProfileState)
+                        }
                     }
                 }
             }
@@ -143,9 +145,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun observeServiceState() {
-        lifecycleScope.launchWhenResumed {
-            dataStore.isServiceRunning.collect { isRunning ->
-                serviceIsRunning = isRunning
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dataStore.isServiceRunning.collect { isRunning ->
+                    serviceIsRunning = isRunning
+                }
             }
         }
     }

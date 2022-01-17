@@ -12,13 +12,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.vkloggingonlinefriends.R
-import com.example.vkloggingonlinefriends.databinding.FragmentFriendDetailBinding
 import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.databinding.FragmentFriendDetailBinding
 import com.example.vkloggingonlinefriends.domain.model.Friend
 import com.example.vkloggingonlinefriends.domain.service.FriendsLoggingService
 import com.example.vkloggingonlinefriends.presentation.ui.frienddetail.FriendDetailEvent.*
@@ -27,6 +29,7 @@ import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -51,11 +54,6 @@ class FriendDetailFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        observeStateFriendDetail()
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +62,7 @@ class FriendDetailFragment : Fragment() {
         val friendId = args.friendId
         viewModel.onTriggerEvent(SetCurrentFriend(friendId))
 
+        observeStateFriendDetail()
         observeServiceState()
 
         binding.switchLogging.setOnCheckedChangeListener { _, isChecked ->
@@ -85,33 +84,35 @@ class FriendDetailFragment : Fragment() {
     }
 
     private fun observeStateFriendDetail() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.stateFriendDetail.collectLatest { state ->
-                when (state) {
-                    FriendInfoLoading -> {
-                        binding.calendarView.isVisible = false
-                        binding.textSavedStatistic.isVisible = false
-                    }
-                    is FriendInfoLoadedSuccess -> {
-                        binding.calendarView.isVisible = false
-                        binding.textSavedStatistic.isVisible = false
-                        showFriendInfo(state.friend)
-                        calendarViewSetting(state.minDate)
-                    }
-                    DateSelection -> {
-                        binding.calendarView.isVisible = true
-                        binding.textSavedStatistic.isVisible = false
-                    }
-                    is StatisticsReady -> {
-                        binding.calendarView.isVisible = false
-                        binding.textSavedStatistic.isVisible = true
-                        showSavedStatistic(state.statistics)
-                    }
-                    LoggingStarted -> {
-                        startService()
-                    }
-                    LoggingStopped -> {
-                        stopService()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFriendDetail.collectLatest { state ->
+                    when (state) {
+                        FriendInfoLoading -> {
+                            binding.calendarView.isVisible = false
+                            binding.textSavedStatistic.isVisible = false
+                        }
+                        is FriendInfoLoadedSuccess -> {
+                            binding.calendarView.isVisible = false
+                            binding.textSavedStatistic.isVisible = false
+                            showFriendInfo(state.friend)
+                            calendarViewSetting(state.minDate)
+                        }
+                        DateSelection -> {
+                            binding.calendarView.isVisible = true
+                            binding.textSavedStatistic.isVisible = false
+                        }
+                        is StatisticsReady -> {
+                            binding.calendarView.isVisible = false
+                            binding.textSavedStatistic.isVisible = true
+                            showSavedStatistic(state.statistics)
+                        }
+                        LoggingStarted -> {
+                            startService()
+                        }
+                        LoggingStopped -> {
+                            stopService()
+                        }
                     }
                 }
             }
@@ -125,9 +126,11 @@ class FriendDetailFragment : Fragment() {
     }
 
     private fun observeServiceState() {
-        lifecycleScope.launchWhenResumed {
-            dataStore.isServiceRunning.collect { isRunning ->
-                serviceIsRunning = isRunning
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dataStore.isServiceRunning.collect { isRunning ->
+                    serviceIsRunning = isRunning
+                }
             }
         }
     }

@@ -66,6 +66,23 @@ class FriendsLoggingService : Service() {
 
         startForeground(SERVICE_ID, notification)
 
+        logFriendsOnlineStatus()
+
+        return START_STICKY
+    }
+
+    override fun onBind(p0: Intent?): IBinder? {
+        return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+        serviceIsRunning = false
+        dataStore.setServiceRunning(serviceIsRunning)
+    }
+
+    private fun logFriendsOnlineStatus() {
         CoroutineScope(ioDispatcher + job).launch {
             var currentDate = System.currentTimeMillis()
             while (job.isActive) {
@@ -116,19 +133,6 @@ class FriendsLoggingService : Service() {
                 delay(ONE_MINUTE)
             }
         }
-
-        return START_STICKY
-    }
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-        serviceIsRunning = false
-        dataStore.setServiceRunning(serviceIsRunning)
     }
 
 }

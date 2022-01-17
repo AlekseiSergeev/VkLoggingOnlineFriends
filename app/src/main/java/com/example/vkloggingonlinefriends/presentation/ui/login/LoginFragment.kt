@@ -13,16 +13,19 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.vkloggingonlinefriends.databinding.FragmentLoginBinding
 import com.example.vkloggingonlinefriends.data.cache.datastore.AppDataStore
+import com.example.vkloggingonlinefriends.databinding.FragmentLoginBinding
 import com.example.vkloggingonlinefriends.presentation.ui.login.LoginEvent.*
 import com.example.vkloggingonlinefriends.utils.RESULT_ERROR_KEY
 import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @InternalCoroutinesApi
@@ -36,11 +39,6 @@ class LoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launchWhenStarted {
-            viewModel.loginState.collectLatest {
-                observeLoginState(it)
-            }
-        }
         viewModel.onTriggerEvent(ReturnToInitialState)
     }
 
@@ -55,6 +53,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeLoginState()
 
         val vkActivityLauncher = registerForActivityResult(StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -73,15 +72,26 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun observeLoginState(loginState: LoginState) {
-        binding.progressBarLogin.isVisible = loginState.showProgressBar
-        if (loginState.isLoggedIn) {
-            viewModel.onTriggerEvent(ReturnToInitialState)
-            findNavController().safeNavigate(LoginFragmentDirections.actionLoginFragmentToProfileFragment())
-        }
-        if (loginState.loginError != null) {
-            Toast.makeText(activity, "Login error: ${loginState.loginError}", Toast.LENGTH_SHORT)
-                .show()
+    private fun observeLoginState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loginState.collectLatest { loginState ->
+                    binding.progressBarLogin.isVisible = loginState.showProgressBar
+                    if (loginState.isLoggedIn) {
+                        viewModel.onTriggerEvent(ReturnToInitialState)
+                        findNavController()
+                            .safeNavigate(LoginFragmentDirections.actionLoginFragmentToProfileFragment())
+                    }
+                    if (loginState.loginError != null) {
+                        Toast.makeText(
+                            activity,
+                            "Login error: ${loginState.loginError}",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+            }
         }
     }
 

@@ -6,7 +6,9 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.vkloggingonlinefriends.R
@@ -19,6 +21,7 @@ import com.example.vkloggingonlinefriends.utils.EMPTY_STRING
 import com.example.vkloggingonlinefriends.utils.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FriendsListFragment : Fragment() {
@@ -41,14 +44,10 @@ class FriendsListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        observeFriendsState()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeFriendsState()
         viewModel.onTriggerEvent(LoadingFriends(showAllFriends))
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -88,27 +87,31 @@ class FriendsListFragment : Fragment() {
     }
 
     private fun observeFriendsList() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.filteredFriends.collectLatest {
-                adapter.submitList(it)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.filteredFriends.collectLatest {
+                    adapter.submitList(it)
+                }
             }
         }
     }
 
     private fun observeFriendsState() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.stateFriends.collectLatest { friendsState ->
-                when (friendsState) {
-                    LoadingFriendsSuccess -> {
-                        showProgressBar(false)
-                        observeFriendsList()
-                    }
-                    is LoadingFriendsFailed -> {
-                        showProgressBar(false)
-                        displayErrorDialog(friendsState.errorMessage)
-                    }
-                    LoadingFriendsStarted -> {
-                        showProgressBar(true)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFriends.collectLatest { friendsState ->
+                    when (friendsState) {
+                        LoadingFriendsSuccess -> {
+                            showProgressBar(false)
+                            observeFriendsList()
+                        }
+                        is LoadingFriendsFailed -> {
+                            showProgressBar(false)
+                            displayErrorDialog(friendsState.errorMessage)
+                        }
+                        LoadingFriendsStarted -> {
+                            showProgressBar(true)
+                        }
                     }
                 }
             }
