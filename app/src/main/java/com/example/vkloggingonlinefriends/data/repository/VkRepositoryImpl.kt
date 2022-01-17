@@ -6,12 +6,16 @@ import com.example.vkloggingonlinefriends.domain.model.Friend
 import com.example.vkloggingonlinefriends.domain.model.User
 import com.example.vkloggingonlinefriends.domain.repository.VkRepository
 import com.example.vkloggingonlinefriends.domain.state.DataState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class VkRepositoryImpl(
     private val networkDataSource: VkNetworkDataSource,
-    private val cacheDataSource: VkCacheDataSource
+    private val cacheDataSource: VkCacheDataSource,
+    private val ioDispatcher: CoroutineDispatcher
 ) : VkRepository {
 
     override suspend fun getUserInfo(): Flow<DataState<User>> = flow {
@@ -31,7 +35,7 @@ class VkRepositoryImpl(
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
-    }
+    }.flowOn(ioDispatcher)
 
     override suspend fun getFriends(): Flow<DataState<List<Friend>>> = flow {
         emit(DataState.Loading)
@@ -56,7 +60,7 @@ class VkRepositoryImpl(
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
-    }
+    }.flowOn(ioDispatcher)
 
     override suspend fun getOnlineFriends(): Flow<DataState<List<Friend>>> = flow {
         emit(DataState.Loading)
@@ -79,58 +83,76 @@ class VkRepositoryImpl(
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
+    }.flowOn(ioDispatcher)
+
+    override suspend fun getFriendById(id: Int): Friend = withContext(ioDispatcher) {
+        cacheDataSource.getFriendById(id)
     }
 
-    override suspend fun getFriendById(id: Int): Friend = cacheDataSource.getFriendById(id)
-
-    override suspend fun getOnlineFriendsId(): List<Int>? = try {
-        when (val serviceResponse = networkDataSource.getFriendsOnlineIds()) {
-            is DataState.Success -> {
-                serviceResponse.data
+    override suspend fun getOnlineFriendsId(): List<Int>? = withContext(ioDispatcher) {
+        try {
+            when (val serviceResponse = networkDataSource.getFriendsOnlineIds()) {
+                is DataState.Success -> {
+                    serviceResponse.data
+                }
+                else -> {
+                    listOf()
+                }
             }
-            is DataState.Error -> {
-                listOf()
-            }
-            else -> {
-                listOf()
-            }
+        } catch (e: Exception) {
+            listOf()
         }
-    } catch (e: Exception) {
-        listOf()
     }
 
     override suspend fun updateFriendLogging(id: Int, logging: Boolean) {
-        cacheDataSource.updateFriendLogging(id, logging)
+        withContext(ioDispatcher) {
+            cacheDataSource.updateFriendLogging(id, logging)
+        }
     }
 
-    override suspend fun getLoggedFriends(): List<LoggedFriends> =
+    override suspend fun getLoggedFriends(): List<LoggedFriends> = withContext(ioDispatcher) {
         cacheDataSource.getLoggedFriends()
+    }
 
     override suspend fun insertLoggedFriend(id: Int, logging: Boolean) {
-        cacheDataSource.insertLoggedFriend(id, logging)
+        withContext(ioDispatcher) {
+            cacheDataSource.insertLoggedFriend(id, logging)
+        }
     }
 
     override suspend fun updateLoggedFriendPreviousOnline(id: Int, onlineStatus: Int) {
-        cacheDataSource.updateLoggedFriendPreviousOnline(id, onlineStatus)
+        withContext(ioDispatcher) {
+            cacheDataSource.updateLoggedFriendPreviousOnline(id, onlineStatus)
+        }
     }
 
     override suspend fun deleteLoggedFriend(id: Int) {
-        cacheDataSource.deleteLoggedFriend(id)
+        withContext(ioDispatcher) {
+            cacheDataSource.deleteLoggedFriend(id)
+        }
     }
 
     override suspend fun insertOnlineTimeStatistic(statistic: OnlineTimeStatistic) {
-        cacheDataSource.insertOnlineTimeStatistic(statistic)
+        withContext(ioDispatcher) {
+            cacheDataSource.insertOnlineTimeStatistic(statistic)
+        }
     }
 
     override suspend fun getStatisticForFriend(id: Int): List<OnlineTimeStatistic> =
-        cacheDataSource.getStatisticForFriend(id)
+        withContext(ioDispatcher) {
+            cacheDataSource.getStatisticForFriend(id)
+        }
 
     override suspend fun deleteUsers() {
-        cacheDataSource.deleteUsers()
+        withContext(ioDispatcher) {
+            cacheDataSource.deleteUsers()
+        }
     }
 
     override suspend fun deleteAllFriends() {
-        cacheDataSource.deleteAllFriends()
-        cacheDataSource.deleteAllLoggedFriends()
+        withContext(ioDispatcher) {
+            cacheDataSource.deleteAllFriends()
+            cacheDataSource.deleteAllLoggedFriends()
+        }
     }
 }

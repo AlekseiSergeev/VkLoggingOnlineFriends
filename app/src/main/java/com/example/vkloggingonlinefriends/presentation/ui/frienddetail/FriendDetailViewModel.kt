@@ -39,7 +39,7 @@ class FriendDetailViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onTriggerEvent(event: FriendDetailEvent) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when (event) {
                 is SetCurrentFriend -> {
                     setCurrentFriend(event.friendId)

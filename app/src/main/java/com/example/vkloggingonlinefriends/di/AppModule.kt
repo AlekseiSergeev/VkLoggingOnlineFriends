@@ -8,6 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -22,7 +24,9 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDataStore(app: VkApplication): AppDataStore {
-        return AppDataStore(app)
-    }
+    fun provideDataStore(app: VkApplication): AppDataStore = AppDataStore(app)
+
+    @Singleton
+    @Provides
+    fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

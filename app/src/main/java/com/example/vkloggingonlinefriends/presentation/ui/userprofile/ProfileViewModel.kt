@@ -33,7 +33,7 @@ class ProfileViewModel
 
 
     fun onTriggerEvent(event: ProfileEvent) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when (event) {
                 is LoadingUser -> {
                     loadingUserInfo()

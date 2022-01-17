@@ -41,6 +41,9 @@ class FriendsLoggingService : Service() {
     @Inject
     lateinit var repository: VkRepository
 
+    @Inject
+    lateinit var ioDispatcher: CoroutineDispatcher
+
     override fun onCreate() {
         super.onCreate()
         serviceIsRunning = true
@@ -63,7 +66,7 @@ class FriendsLoggingService : Service() {
 
         startForeground(SERVICE_ID, notification)
 
-        CoroutineScope(Dispatchers.IO + job).launch {
+        CoroutineScope(ioDispatcher + job).launch {
             var currentDate = System.currentTimeMillis()
             while (job.isActive) {
                 loggedFriends.addAll(repository.getLoggedFriends())

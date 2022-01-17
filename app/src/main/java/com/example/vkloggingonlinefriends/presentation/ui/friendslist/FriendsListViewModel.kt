@@ -33,7 +33,7 @@ class FriendsListViewModel
     val filteredFriends = _filteredFriends.asStateFlow()
 
     fun onTriggerEvent (event: FriendsListEvent) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when(event) {
                 is LoadingFriends -> {
                     if(event.getAllFriends) loadAllFriends()

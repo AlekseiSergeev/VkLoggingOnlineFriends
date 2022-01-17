@@ -17,6 +17,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -48,8 +49,9 @@ object RepositoryModule {
     @Provides
     fun provideVkRepository(
         networkDataSource: VkNetworkDataSource,
-        cacheDataSource: VkCacheDataSource
+        cacheDataSource: VkCacheDataSource,
+        ioDispatcher: CoroutineDispatcher
     ): VkRepository {
-        return VkRepositoryImpl(networkDataSource, cacheDataSource)
+        return VkRepositoryImpl(networkDataSource, cacheDataSource, ioDispatcher)
     }
 }
